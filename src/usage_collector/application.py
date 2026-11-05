@@ -12,3 +12,8 @@ class AnalyticsApplication:
 
     def run(self, save=None):
         return self.show(save=save)
+
+    def create_window(self, source):
+        """GUIを組み込む際に、独立したウィンドウを生成する。"""
+        from .gui import AnalyticsWindow
+        return AnalyticsWindow(self.history, source)

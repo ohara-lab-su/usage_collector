@@ -1,35 +1,83 @@
 # usage_collector
 
-PyPI StatsとGoogle Analytics 4（GA4）の統計を収集・保存・解析するPythonライブラリ。バージョンは`0.0.0`。
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ohara-lab-su/usage_collector/blob/main/README.md)
+[![ja](https://img.shields.io/badge/lang-ja-yellow.svg)](https://github.com/ohara-lab-su/usage_collector/blob/main/README.ja.md)
 
-このリポジトリは**公開ライブラリ専用**で、認証情報・実運用の対象パッケージ一覧・収集したCSV・GitHub Actionsの運用ワークフローを含めません。運用用リポジトリ`usage_collector_data`と独立しています。
+[![GitHub](https://img.shields.io/badge/GitHub-ohara--lab--su%2Fusage_collector-181717?logo=github)](https://github.com/ohara-lab-su/usage_collector/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Documentation-222222?logo=githubpages&logoColor=white)](https://ohara-lab-su.github.io/usage_collector/en/)
+[![Ohara Lab](https://img.shields.io/badge/Ohara%20Lab-Home-4B5563?logo=homeassistant&logoColor=white)](https://ohara-lab-su.github.io/)
 
-## インストール
+`usage_collector` is a reusable Python library for collecting PyPI Stats and Google Analytics 4 (GA4) reports, maintaining CSV histories, analyzing time series, and visualizing them with PySide6. It is independent of the private repository where actual data and credentials are stored. Version: `0.0.0` (pre-release). Python >=3.10.
 
-```sh
+## Architecture
+
+The public library implements `collection.py` (collectors and orchestration), `pypi.py` and `ga4.py` (provider APIs), `csv_store.py` and `history.py` (CSV upsert and optional Git sync), `analysis.py` and `analytics_api.py` (headless analytics), `application.py` and `gui.py` (GUI), and `cli.py` (editable script installation). Operational configuration and collected CSV files belong in a separate **private** `usage_collector_data` repository.
+
+The collectors currently write CSV files to a supplied directory; they are not fully storage-agnostic. `GitHistorySync` is optional, and Git synchronization is not required for local analysis.
+
+## Installation
+
+```bash
 python -m pip install .
+usage_collector install scripts
 ```
 
-## モジュール
+The second command creates editable `scripts/collect.py`, `scripts/plot.py`, `config/settings.yml`, and `collect.yml` in the current directory, refusing to overwrite existing files. Place `collect.yml` at `.github/workflows/collect.yml` in your private operations repository and replace `OWNER` in the installation URL. The standalone `usage_collector install collect` and `install plot` commands install the separate standalone execution scripts; `install scripts` installs editable operational templates.
 
-`usage_collector.collection`: `PyPICollector`、`GA4Collector`、`CollectionJob`、`make_collectors`。`usage_collector.pypi`と`usage_collector.ga4`はAPI取得とCSVへの保存、`usage_collector.csv_store`はCSVのキー付き更新、`usage_collector.history.CSVHistory`はCSV履歴の読み込みを担当します。`GitHistorySync`は明示的に指定したGitリポジトリのdataブランチからCSVを読み取る補助機能であり、収集・表示の必須依存ではありません。`usage_collector.analysis`と`usage_collector.application`は解析・GUI表示を担当します。
+## Quick start
+
+Edit `config/settings.yml` to list PyPI packages and optionally a GA4 property ID.
+
+```bash
+python scripts/collect.py --source pypi --output data
+python scripts/plot.py --data data
+```
+
+For GA4, set `GA4_PROPERTY_ID` and use Google Application Default Credentials (`GOOGLE_APPLICATION_CREDENTIALS` pointing to a service account JSON file is one option). Grant the service account read access to the GA4 property. Never commit credentials. In GitHub Actions, use the `GOOGLE_CREDENTIALS_JSON` secret and `GA4_PROPERTY_ID` variable in the **private** repository.
+
+## Collection APIs
 
 ```python
-from usage_collector.collection import PyPICollector, CollectionJob
-CollectionJob({"pypi": PyPICollector(["example-package"], "data")}).collect()
+from usage_collector import Settings, make_collectors, CollectionJob
+settings = Settings('config/settings.yml').load()
+collectors = make_collectors(settings, 'data', source='pypi')
+print(CollectionJob(collectors).collect())
 ```
 
-`usage_collector run collect --config config/settings.yml --output data`で収集できます。`usage_collector run plot --data data`で既存CSVを表示できます。GUIはローカルCSVがない場合、**自動的にGit取得しません**。Git取得が必要な場合のみ`--fetch`を指定します。`usage_collector install collect`と`usage_collector install plot`で編集可能なスクリプトを出力できます。
+`PyPICollector(packages, directory, session=None)` and `GA4Collector(property_id, directory, days=3, client=None)` support dependency injection. The GA4 client uses the Google Analytics Data API; the PyPI client uses the public PyPI Stats endpoints (`overall`, `python_major`, `python_minor`, `system`). PyPI overall records exclude mirrors.
 
-## GA4認証
+GA4 reports: `daily`, `pages`, `countries`, `regions`, `cities`, `sources`, and `devices`. Data is written as `data/pypi/*.csv` and `data/ga4/*.csv` with keyed upserts. For an absent GA4 report CSV, collection backfills 30 days; subsequent runs use the requested window.
 
-Google公式のApplication Default Credentials（ADC）を使用します。サービスアカウントJSONをGitにコミットせず、実行環境の`GOOGLE_APPLICATION_CREDENTIALS`で認証ファイルを指定してください。プロパティIDは環境変数`GA4_PROPERTY_ID`または設定の`ga4.property_id`から読み取ります。
+## Analytics APIs
 
-## 設定
+```python
+from usage_collector import CSVHistory, PyPIAnalytics, GA4Analytics
+history = CSVHistory('data')
+print(PyPIAnalytics(history).downloads('python_minor'))
+print(GA4Analytics(history).report('countries', 'sessions'))
+print(GA4Analytics(history).report('pages', 'screenPageViews'))
+```
 
-`config/settings.yml`は公開用サンプルです。実際のパッケージ名とGA4プロパティIDは運用リポジトリ側に設定してください。PyPIは認証不要、GA4はADCが必要です。CSVは`data/pypi`および`data/ga4`以下に作成します。
+Results map tuples of dimension values to date/value mappings. `TimeSeries(rows).group(dimensions, metric, start=None, end=None)` supports generic grouping. `CSVHistory.read(source, report)` returns CSV dictionaries. These APIs work without launching Qt.
 
-## 運用との分離
+## GUI and extensibility
 
-非公開リポジトリ`usage_collector_data`の`main`に設定、`scripts/collect.py`、ワークフローを置き、`data`ブランチにCSVを保存します。Actionsは公開ライブラリを`pip install`し、ローカルの収集スクリプトを実行します。公開ライブラリから非公開リポジトリへの認証・アクセスは不要です。データブランチの更新には非公開リポジトリの`GITHUB_TOKEN`の`contents: write`権限が必要です。
+```python
+from usage_collector import CSVHistory
+from usage_collector.application import AnalyticsApplication
+app = AnalyticsApplication(CSVHistory('data'))
+app.show()
+# app.create_window('ga4') can be used in a host Qt application.
+```
 
+`gui.AnalyticsWindow(history, source)` is a PySide6 `QMainWindow` that may be subclassed. The host application must create/manage `QApplication` and the Qt event loop when using `create_window`. Existing visualization modes include PyPI package/Python/OS statistics and GA4 maps, trends, traffic sources, devices, and pages.
+
+## Deployment and security
+
+Keep `usage_collector` public and `usage_collector_data` private. In the private repository, retain protected `main` for scripts, configuration and the workflow, and `data` for collected CSVs. The workflow installs the public package and commits only to the private `data` branch. Public GitHub repositories must not contain GA4 data or historical secrets. `contents: write` is required for the private workflow to push to `data`; branch protection rules must permit this.
+
+## Known limitations
+
+The CSV schema currently does not include GA4 property ID, so multiple properties must use separate data directories. Git sync requires an accessible repository and remote and may require local troubleshooting. PyPI Stats is an external service with rate limits and possible reporting delays. `0.0.0` denotes pre-release status.
+
+See [English docs](docs/en/index.md), [installation](docs/en/installation.md), [quick start](docs/en/quickstart.md), [API reference](docs/en/api.md), and [Japanese README](README.ja.md).
