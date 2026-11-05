@@ -16,4 +16,4 @@ usage_collector = "usage_collector.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-usage_collector = ["scripts/*.py", "templates/scripts/*.py", "templates/config/*.yml", "templates/*.yml", "world_countries.json", "settings.yml"]
+usage_collector = ["scripts/*.py", "templates/config/*.yml", "templates/*.yml", "world_countries.json", "settings.yml"]

@@ -33,8 +33,8 @@ def main():
         if args.script == "scripts":
             resources = files("usage_collector").joinpath("templates")
             targets = {
-                "scripts/collect.py": resources.joinpath("scripts", "collect.py"),
-                "scripts/plot.py": resources.joinpath("scripts", "plot.py"),
+                "scripts/collect.py": files("usage_collector").joinpath("scripts", "collect.py"),
+                "scripts/plot.py": files("usage_collector").joinpath("scripts", "plot.py"),
                 "config/settings.yml": resources.joinpath("config", "settings.yml"),
                 "collect.yml": resources.joinpath("collect.yml"),
             }
