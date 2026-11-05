@@ -84,3 +84,13 @@ See [English docs](docs/en/index.md), [installation](docs/en/installation.md), [
 
 
 [Installation](installation.md) · [Quick start](quickstart.md) · [API](api.md) · [日本語](../ja/index.md)
+
+
+```{toctree}
+:maxdepth: 2
+:caption: Contents
+
+installation
+quickstart
+api
+```
