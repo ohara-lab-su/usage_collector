@@ -352,3 +352,13 @@ GUI拡張では `AnalyticsApplication(history).create_window("ga4")` でウィ�
 
 
 [導入](installation.md) · [クイックスタート](quickstart.md) · [API](api.md) · [English](../en/index.md)
+
+
+```{toctree}
+:maxdepth: 2
+:caption: Contents
+
+installation
+quickstart
+api
+```
