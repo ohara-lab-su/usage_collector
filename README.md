@@ -1,5 +1,12 @@
 # usage_collector
 
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ohara-lab-su/usage_collector/blob/main/README.md)
+[![ja](https://img.shields.io/badge/lang-ja-yellow.svg)](https://github.com/ohara-lab-su/usage_collector/blob/main/README.ja.md)
+
+[![GitHub](https://img.shields.io/badge/GitHub-ohara--lab--su%2Fusage_collector-181717?logo=github)](https://github.com/ohara-lab-su/usage_collector/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Documentation-222222?logo=githubpages&logoColor=white)](https://ohara-lab-su.github.io/usage_collector/en/)
+[![Ohara Lab](https://img.shields.io/badge/Ohara%20Lab-Home-4B5563?logo=homeassistant&logoColor=white)](https://ohara-lab-su.github.io/)
+
 `usage_collector` is a reusable Python library for collecting PyPI Stats and Google Analytics 4 (GA4) reports, maintaining CSV histories, analyzing time series, and visualizing them with PySide6. It is independent of the private repository where actual data and credentials are stored. Version: `0.0.0` (pre-release). Python >=3.10.
 
 ## Architecture

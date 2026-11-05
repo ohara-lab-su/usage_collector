@@ -1,5 +1,12 @@
 # usage_collector
 
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ohara-lab-su/usage_collector/blob/main/README.md)
+[![ja](https://img.shields.io/badge/lang-ja-yellow.svg)](https://github.com/ohara-lab-su/usage_collector/blob/main/README.ja.md)
+
+[![GitHub](https://img.shields.io/badge/GitHub-ohara--lab--su%2Fusage_collector-181717?logo=github)](https://github.com/ohara-lab-su/usage_collector/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Documentation-222222?logo=githubpages&logoColor=white)](https://ohara-lab-su.github.io/usage_collector/ja/)
+[![Ohara Lab](https://img.shields.io/badge/Ohara%20Lab-Home-4B5563?logo=homeassistant&logoColor=white)](https://ohara-lab-su.github.io/)
+
 PyPI Stats と Google Analytics 4（GA4）の利用統計を取得し、日別CSVとして蓄積・解析・可視化するPythonライブラリです。Python API、CLI、PySide6 GUI、運用リポジトリ向けの実行スクリプト・GitHub Actionsテンプレートを提供します。
 
 **開発バージョン：`0.0.0`／Python 3.10以上。** このリポジトリは公開可能な**ライブラリ本体**です。実際の収集対象、Google認証情報、収集済みCSVは利用者の運用環境で管理します。本書は、分離後のソースコードに対応した設計・API・運用・再構築手順をまとめています。
