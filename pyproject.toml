@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "usage_collector"
+version = "0.0.0"
+description = "PyPI and Google Analytics usage history collector"
+requires-python = ">=3.10"
+dependencies = ["requests>=2.31", "PyYAML>=6", "google-analytics-data>=0.18", "google-auth>=2", "matplotlib>=3.7", "PySide6>=6.6"]
+
+[project.scripts]
+usage_collector = "usage_collector.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+usage_collector = ["scripts/*.py", "world_countries.json", "settings.yml"]

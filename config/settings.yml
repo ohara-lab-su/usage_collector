@@ -1,0 +1,5 @@
+pypi:
+  packages:
+    - example-package
+ga4:
+  property_id: null
