@@ -7,7 +7,7 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Documentation-222222?logo=githubpages&logoColor=white)](https://ohara-lab-su.github.io/usage_collector/en/)
 [![Ohara Lab](https://img.shields.io/badge/Ohara%20Lab-Home-4B5563?logo=homeassistant&logoColor=white)](https://ohara-lab-su.github.io/)
 
-`usage_collector` is a reusable Python library for collecting PyPI Stats and Google Analytics 4 (GA4) reports, maintaining CSV histories, analyzing time series, and visualizing them with PySide6. It is independent of the private repository where actual data and credentials are stored. Version: `0.0.0` (pre-release). Python >=3.10.
+`usage_collector` is a reusable Python library for collecting PyPI Stats and Google Analytics 4 (GA4) reports, maintaining CSV histories, analyzing time series, and visualizing them with PySide6. It is independent of the private repository where actual data and credentials are stored. Version: `0.0.1` (pre-release). Python >=3.10.
 
 ## Architecture
 
@@ -22,11 +22,11 @@ python -m pip install .
 usage_collector install scripts
 ```
 
-The second command creates editable `scripts/collect.py`, `scripts/plot.py`, `config/settings.yml`, and `collect.yml` in the current directory, refusing to overwrite existing files. Place `collect.yml` at `.github/workflows/collect.yml` in your private operations repository and replace `OWNER` in the installation URL. The standalone `usage_collector install collect` and `install plot` commands install the separate standalone execution scripts; `install scripts` installs editable operational templates.
+The second command creates editable `scripts/collect.py`, `scripts/plot.py`, `scripts/settings.yml`, and `collect.yml` in the current directory, refusing to overwrite existing files. Place `collect.yml` at `.github/workflows/collect.yml` in your private operations repository and replace `OWNER` in the installation URL. The standalone `usage_collector install collect` and `install plot` commands install the separate standalone execution scripts; `install scripts` installs editable operational templates.
 
 ## Quick start
 
-Edit `config/settings.yml` to list PyPI packages and optionally a GA4 property ID.
+Edit `scripts/settings.yml` to list PyPI packages and optionally a GA4 property ID.
 
 ```bash
 python scripts/collect.py --source pypi --output data
@@ -39,7 +39,7 @@ For GA4, set `GA4_PROPERTY_ID` and use Google Application Default Credentials (`
 
 ```python
 from usage_collector import Settings, make_collectors, CollectionJob
-settings = Settings('config/settings.yml').load()
+settings = Settings('scripts/settings.yml').load()
 collectors = make_collectors(settings, 'data', source='pypi')
 print(CollectionJob(collectors).collect())
 ```
@@ -78,6 +78,6 @@ Keep `usage_collector` public and `usage_collector_data` private. In the private
 
 ## Known limitations
 
-The CSV schema currently does not include GA4 property ID, so multiple properties must use separate data directories. Git sync requires an accessible repository and remote and may require local troubleshooting. PyPI Stats is an external service with rate limits and possible reporting delays. `0.0.0` denotes pre-release status.
+The CSV schema currently does not include GA4 property ID, so multiple properties must use separate data directories. Git sync requires an accessible repository and remote and may require local troubleshooting. PyPI Stats is an external service with rate limits and possible reporting delays. `0.0.1` denotes pre-release status.
 
 See [English docs](docs/en/index.md), [installation](docs/en/installation.md), [quick start](docs/en/quickstart.md), [API reference](docs/en/api.md), and [Japanese README](README.ja.md).

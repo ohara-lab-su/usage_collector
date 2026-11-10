@@ -34,7 +34,7 @@ class CollectionJob:
             result[name] = collector.collect()
         return result
 
-def make_collectors(settings, directory, source="all", ga4_days=3, skip_unconfigured_ga4=True):
+def make_collectors(settings, directory, source="all", ga4_days=3, skip_unconfigured_ga4=False):
     result = {}
     if source in ("all", "pypi"):
         result["pypi"] = PyPICollector(settings.get("pypi", {}).get("packages", []), directory)

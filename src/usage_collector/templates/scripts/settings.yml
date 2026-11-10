@@ -1,0 +1,26 @@
+pypi:
+  packages:
+    - packmol-util
+    - rmc-dft
+    - rmc-util
+    - vasp-util
+    - qn-util
+    - xlogger-py
+    - log-ctrl
+    - ese774-frame
+    - dds-frame
+    - tango-frame
+    - proc-executor
+    - device-proxy-factory
+    - image-server-kit
+    - teaching-manager
+    - notify-frame
+    - glyph-motion
+    - n10w02
+    - aandd-reader
+    - xdm1000-py
+    - pm2cd
+    - mini-pix
+ga4:
+  property_id: null
+  # credentials_file: ./service-account.json  # JSON鍵はGit管理しない

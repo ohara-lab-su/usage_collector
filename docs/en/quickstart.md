@@ -5,11 +5,11 @@
 ```bash
 python -m pip install .
 usage_collector install scripts
-python scripts/collect.py --config config/settings.yml --source pypi --output data
+python scripts/collect.py --config scripts/settings.yml --source pypi --output data
 python scripts/plot.py --data data
 ```
 
-Edit `pypi.packages` in `config/settings.yml`. GA4 requires a property ID and ADC.
+Edit `pypi.packages` in `scripts/settings.yml`. GA4 requires a property ID and ADC.
 
 ```bash
 python scripts/collect.py --source ga4 --ga4-days 3 --output data

@@ -19,16 +19,14 @@ parser = argparse.ArgumentParser(description="PyPI・GA4の解析GUI")
 parser.add_argument("--branch", default="data")
 parser.add_argument("--remote", default="origin")
 parser.add_argument("--data", default=None)
-parser.add_argument("--config", default=None)
+parser.add_argument("--config", default=str(Path(__file__).resolve().parent / "settings.yml"))
 parser.add_argument("--refresh", action="store_true")
 parser.add_argument("--fetch", action="store_true")
 parser.add_argument("--save", metavar="PNG")
 args = parser.parse_args()
 
 # ライブラリの表示スクリプトはローカルCSVを参照する。Git取得は明示指定時だけ行う。
-project_root = Path(__file__).resolve().parents[3]
-if not (project_root / "pyproject.toml").is_file():
-    project_root = Path.cwd().resolve()
+project_root = Path(__file__).resolve().parents[1]
 data_directory = Path(args.data).resolve() if args.data else project_root / "data"
 history = CSVHistory(data_directory)
 if args.fetch:

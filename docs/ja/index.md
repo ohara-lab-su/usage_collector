@@ -9,7 +9,7 @@
 
 PyPI Stats と Google Analytics 4（GA4）の利用統計を取得し、日別CSVとして蓄積・解析・可視化するPythonライブラリです。Python API、CLI、PySide6 GUI、運用リポジトリ向けの実行スクリプト・GitHub Actionsテンプレートを提供します。
 
-**開発バージョン：`0.0.0`／Python 3.10以上。** このリポジトリは公開可能な**ライブラリ本体**です。実際の収集対象、Google認証情報、収集済みCSVは利用者の運用環境で管理します。本書は、分離後のソースコードに対応した設計・API・運用・再構築手順をまとめています。
+**開発バージョン：`0.0.1`／Python 3.10以上。** このリポジトリは公開可能な**ライブラリ本体**です。実際の収集対象、Google認証情報、収集済みCSVは利用者の運用環境で管理します。本書は、分離後のソースコードに対応した設計・API・運用・再構築手順をまとめています。
 
 ## 1. 設計と責務の分離
 
@@ -27,7 +27,7 @@ PyPI Stats と Google Analytics 4（GA4）の利用統計を取得し、日別CS
      └─ templates/ ─ 運用側の scripts・設定例・Actions例を生成
 
 【非公開】usage_collector_data（利用者の運用リポジトリの一例）
-  main：scripts/collect.py、scripts/plot.py、config/settings.yml、Actions
+  main：scripts/collect.py、scripts/plot.py、scripts/settings.yml、Actions
   data：data/pypi/*.csv、data/ga4/*.csv
   GitHub Secrets：GA4認証JSON／Variables：GA4プロパティID
 ```
@@ -62,7 +62,7 @@ python -m pip install 'git+https://github.com/ohara-lab-su/usage_collector.git@m
 usage_collector install scripts
 usage_collector install collect
 usage_collector install plot
-usage_collector run collect --config config/settings.yml --output data
+usage_collector run collect --config scripts/settings.yml --output data
 usage_collector run plot --data data
 ```
 
@@ -87,11 +87,11 @@ usage_collector run plot --data data
 ### 収集コマンド
 
 ```bash
-usage_collector run collect --source pypi --config config/settings.yml --output data
+usage_collector run collect --source pypi --config scripts/settings.yml --output data
 usage_collector run collect --source ga4 --ga4-days 3 --output data
 usage_collector run collect --source all --output data
 
-python scripts/collect.py --source pypi --config config/settings.yml --output data
+python scripts/collect.py --source pypi --config scripts/settings.yml --output data
 python scripts/collect.py --source ga4 --ga4-days 3 --output data
 ```
 
@@ -102,7 +102,7 @@ python scripts/collect.py --source ga4 --ga4-days 3 --output data
 ```bash
 usage_collector run plot --data data
 usage_collector run plot --data data --save figure.png
-usage_collector run plot --data data --refresh --config config/settings.yml
+usage_collector run plot --data data --refresh --config scripts/settings.yml
 
 python scripts/plot.py --data data
 python scripts/plot.py --data data --repository . --branch data --fetch
@@ -124,7 +124,7 @@ ga4:
 
 `pypi.packages` は対象パッケージ名の配列です。`ga4.property_id` はGA4の数値プロパティIDで、環境変数 `GA4_PROPERTY_ID` が設定されていれば**環境変数を優先**します。秘密鍵をYAMLに書かないでください。
 
-`Settings(path).load()` は明示されたファイルを読みます。引数なしの場合は、カレントディレクトリの `config/settings.yml` を優先し、存在しなければライブラリ同梱のサンプル設定を使います。設定のルートはYAMLマッピングである必要があります。**実運用では `--config` を明示することを推奨します。**
+`Settings(path).load()` は明示されたファイルを読みます。引数なしの場合は、カレントディレクトリの `scripts/settings.yml` を優先し、存在しなければライブラリ同梱のサンプル設定を使います。設定のルートはYAMLマッピングである必要があります。**実運用では `--config` を明示することを推奨します。**
 
 ## 5. PyPI Stats：収集内容と仕様
 
@@ -208,7 +208,7 @@ print(result)  # {'pypi': 取得した行数}
 from usage_collector.settings import Settings
 from usage_collector.collection import CollectionJob, make_collectors
 
-settings = Settings("config/settings.yml").load()
+settings = Settings("scripts/settings.yml").load()
 collectors = make_collectors(settings, "data", source="all", ga4_days=3)
 result = CollectionJob(collectors).collect()
 ```
@@ -249,7 +249,7 @@ usage_collector_data（Private）
   main（保護）
     scripts/collect.py
     scripts/plot.py
-    config/settings.yml
+    scripts/settings.yml
     .github/workflows/collect.yml
   data
     data/pypi/*.csv
@@ -261,7 +261,7 @@ usage_collector_data（Private）
 初期構築は次の順序です。
 
 1. 非公開の運用リポジトリを作成し、`main` を設定します。`data` ブランチも作成します。`main` は保護したままで構いません。
-2. 非公開リポジトリの作業ツリーで `usage_collector install scripts` を実行し、`config/settings.yml` の対象パッケージを設定します。
+2. 非公開リポジトリの作業ツリーで `usage_collector install scripts` を実行し、`scripts/settings.yml` の対象パッケージを設定します。
 3. `collect.yml` の `OWNER` を公開ライブラリのGitHub所有者に置き換え、`.github/workflows/collect.yml` に配置します。ライブラリの公開先が異なる場合はインストールURLを変更します。
 4. GitHub ActionsのSecretsに `GOOGLE_CREDENTIALS_JSON`、Variablesに `GA4_PROPERTY_ID` を登録します。GA4を使わない場合はVariableを設定せず、GA4の収集ステップをスキップできます。
 5. Actionsの `GITHUB_TOKEN` が `data` ブランチに書き込めることを確認します。ワークフローには `permissions: contents: write` が指定されていますが、リポジトリ側の権限・ブランチ保護規則も適用されます。

@@ -1,24 +1,18 @@
-"""明示設定、プロジェクト設定、同梱設定を順に解決する。"""
-from importlib.resources import files
+"""運用設定ファイルの読み込み。"""
 from pathlib import Path
 import yaml
 
 class Settings:
-    def __init__(self, path=None):
-        self.path = Path(path) if path is not None else None
+    def __init__(self, path):
+        if path is None:
+            raise ValueError("設定ファイルのパスを指定してください")
+        self.path = Path(path)
 
     def load(self):
-        if self.path is not None:
-            if not self.path.is_file():
-                raise FileNotFoundError(str(self.path))
-            text = self.path.read_text(encoding="utf-8")
-        else:
-            local = Path.cwd() / "config" / "settings.yml"
-            if local.is_file():
-                text = local.read_text(encoding="utf-8")
-            else:
-                text = files("usage_collector").joinpath("settings.yml").read_text(encoding="utf-8")
-        result = yaml.safe_load(text)
-        if not isinstance(result, dict):
-            raise ValueError("設定ファイルのルートはマッピングである必要があります")
-        return result
+        if not self.path.is_file():
+            raise FileNotFoundError(self.path)
+        with self.path.open(encoding="utf-8") as stream:
+            settings = yaml.safe_load(stream)
+        if not isinstance(settings, dict):
+            raise ValueError("設定ファイルの形式が不正です")
+        return settings

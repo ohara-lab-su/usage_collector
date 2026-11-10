@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.0.1 — 分離構成の修正（2026-11-10）
+
+- 既存の `install scripts`、`install collect`、`install plot`、`run collect`、`run plot` を維持。
+- 運用設定を `scripts/settings.yml` に統一し、生成用テンプレートはライブラリ内に1個だけ保持。
+- PyPI・GA4の同時収集、認証情報不足時のエラー、作業ディレクトリに依存しないパスを修正。
+- GUI、Git同期、解析・CSV保存、Actionsテンプレートの既存機能を維持。
+- 日英README・Pagesの設定パスとバージョンを更新。
+
 ## 0.0.0 — 開発中（2026-11-05）
 
 - PyPI Stats APIの一時的なHTTP 502等に再試行を追加。系列単位で失敗を隔離し、既存CSVを保持。全系列失敗時は異常終了。

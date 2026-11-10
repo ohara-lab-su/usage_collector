@@ -1,6 +1,0 @@
-# 収集対象を指定してください。GA4の認証情報は記載しません。
-pypi:
-  packages:
-    - example-package
-ga4:
-  property_id: null  # 環境変数 GA4_PROPERTY_ID でも指定可能
