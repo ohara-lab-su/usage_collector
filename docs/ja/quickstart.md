@@ -5,11 +5,11 @@
 ```bash
 python -m pip install .
 usage_collector install scripts
-python scripts/collect.py --config config/settings.yml --source pypi --output data
+python scripts/collect.py --config scripts/settings.yml --source pypi --output data
 python scripts/plot.py --data data
 ```
 
-`config/settings.yml` の `pypi.packages` を自分のパッケージに変更してください。GA4収集にはプロパティIDとADCが必要です。
+`scripts/settings.yml` の `pypi.packages` を自分のパッケージに変更してください。GA4収集にはプロパティIDとADCが必要です。
 
 ```bash
 python scripts/collect.py --source ga4 --ga4-days 3 --output data

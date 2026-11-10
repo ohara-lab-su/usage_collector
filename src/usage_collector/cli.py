@@ -35,7 +35,7 @@ def main():
             targets = {
                 "scripts/collect.py": files("usage_collector").joinpath("scripts", "collect.py"),
                 "scripts/plot.py": files("usage_collector").joinpath("scripts", "plot.py"),
-                "config/settings.yml": resources.joinpath("config", "settings.yml"),
+                "scripts/settings.yml": resources.joinpath("scripts", "settings.yml"),
                 "collect.yml": resources.joinpath("collect.yml"),
             }
             existing = [str(Path.cwd() / name) for name in targets if (Path.cwd() / name).exists()]

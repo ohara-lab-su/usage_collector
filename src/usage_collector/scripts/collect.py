@@ -14,8 +14,8 @@ from usage_collector.settings import Settings
 from usage_collector.collection import CollectionJob, make_collectors
 
 parser = argparse.ArgumentParser(description="PyPI・GA4統計をCSVへ収集")
-parser.add_argument("--config", default=None)
-parser.add_argument("--output", default="data")
+parser.add_argument("--config", default=str(Path(__file__).resolve().parent / "settings.yml"))
+parser.add_argument("--output", default=str(Path(__file__).resolve().parents[1] / "data"))
 parser.add_argument("--source", choices=("all", "pypi", "ga4"), default="all")
 parser.add_argument("--ga4-days", type=int, default=3)
 args = parser.parse_args()
@@ -26,10 +26,7 @@ if args.ga4_days < 1:
 settings = Settings(args.config).load()
 directory = Path(args.output)
 collectors = make_collectors(settings, directory, args.source, args.ga4_days,
-                             skip_unconfigured_ga4=(args.source != "ga4"))
-if args.source == "all":
-    if "ga4" not in collectors:
-        print("GA4: プロパティID未設定のためスキップ", flush=True)
+                             skip_unconfigured_ga4=False)
 job = CollectionJob(collectors)
 results = job.collect()
 for source, count in results.items():
